@@ -9,8 +9,6 @@
 
 #define __DEBUG__
 
-using namespace std;
-
 // Define the base type of the node values, weight values, etc.
 // Should only ever be float or double.
 using vType = double;
@@ -36,7 +34,7 @@ namespace nNetwork {
 		virtual int GetDimensionCount() const = 0;
 		virtual int GetDimensionLength(int dimensionNumber) const = 0;
 
-		virtual T Sense(const vector<int>& location) const = 0;
+		virtual T Sense(const std::vector<int>& location) const = 0;
 	};
 
 	//++ ISensor
@@ -50,7 +48,7 @@ namespace nNetwork {
 	class ISensor {
 	public:
 		virtual ~ISensor() {};
-		virtual vType Sense(const vector<int>& senseLocation) const = 0;
+		virtual vType Sense(const std::vector<int>& senseLocation) const = 0;
 	};
 
 	//++ nSynapse
@@ -64,13 +62,12 @@ namespace nNetwork {
 	//+ Purpose:
 	//		Represents a normal neuron. Sensing nodes are derived from nNode
 	class nNode {
-		friend class nNetworkBuilder;
-		friend class nNetworkCopyMachine;
+		friend class nSensingNode;
 	public:
 		nNode(int networkId);
 		virtual ~nNode();
 
-		vector<nSynapse> Synapses;
+		std::vector<nSynapse> Synapses;
 
 		int   GetNetworkId()    const { return m_networkId; }
 		int   GetGlobalId()     const { return m_globalId; }
@@ -115,12 +112,12 @@ namespace nNetwork {
 	class nSensingNode : public nNode
 	{
 	public:
-		nSensingNode(int networkId, const vector<int>& senseLocation) : nNode(networkId), m_senseLocation{ senseLocation } {};
+		nSensingNode(int networkId, const std::vector<int>& senseLocation) : nNode(networkId), m_senseLocation{ senseLocation } {};
 		virtual ~nSensingNode() {};
 
 		virtual void Sense(const ISensor& sensor);
 	protected:
-		vector<int> m_senseLocation;
+		std::vector<int> m_senseLocation;
 	};
 	
 	//++ nNodeNetworkConfig
@@ -140,7 +137,7 @@ namespace nNetwork {
 
 		int   SensesPerTick;
 
-		vector<int>(*pSensorLocationMapper)(int);
+		std::vector<int>(*pSensorLocationMapper)(int);
 	};
 
 
@@ -150,15 +147,15 @@ namespace nNetwork {
 	class nNodeNetwork
 	{
 	public:
-		nNodeNetwork(const vector<int>& layerCounts, const ISensor& sensor);
-		nNodeNetwork(const vector<int>& layerCounts, const ISensor& sensor, const nNodeNetworkConfig& config);
+		nNodeNetwork(const std::vector<int>& layerCounts, const ISensor& sensor);
+		nNodeNetwork(const std::vector<int>& layerCounts, const ISensor& sensor, const nNodeNetworkConfig& config);
 		~nNodeNetwork();
 
 		void Tick();
 		
-		unique_ptr<nNodeNetwork> GetSnapShot() const;
+		std::unique_ptr<nNodeNetwork> GetSnapShot() const;
 
-		vector<int>    GetLayerCounts() const;
+		std::vector<int>    GetLayerCounts() const;
 
 		const ISensor& GetSensor() const;
 
@@ -170,7 +167,7 @@ namespace nNetwork {
 #ifdef __DEBUG__
 
 		nNode* GetResultNode();
-		vector<nSensingNode*>* GetSensingNodes();
+		std::vector<nSensingNode*>* GetSensingNodes();
 
 #endif
 
@@ -190,10 +187,10 @@ namespace nNetwork {
 		void NodeTick();
 
 		// _layers is the owner of the network memory.
-		vector<vector<nNode*>*> m_layers;
+		std::vector<std::vector<nNode*>*> m_layers;
 
 		// _topLayer contains pointers to nodes owned by m_layers.
-		vector<nSensingNode*> m_sensingLayer;
+		std::vector<nSensingNode*> m_sensingLayer;
 
 		// m_pResultNode is also owned by m_layers
 		nNode*	m_pResultNode;
@@ -203,10 +200,10 @@ namespace nNetwork {
 		-----------------------------------------------------------------------------------------*/
 		void BuildFirstLayer(int count, const ISensor& sensor);
 		void BuildNextLayer(int count);
-		void BuildNetwork(const vector<int>& layerCounts, const ISensor& sensor);
+		void BuildNetwork(const std::vector<int>& layerCounts, const ISensor& sensor);
 		void BuildSynapses() const;
 		vType GenerateInitialWeight() const;
-		void BuildLayerSynapses(const vector<nNode*>* const bottomLayer, const vector<nNode*>* const topLayer) const;
+		void BuildLayerSynapses(const std::vector<nNode*>* const bottomLayer, const std::vector<nNode*>* const topLayer) const;
 		void CopySensingLayer();
 		void CopyResultNode();
 
@@ -222,7 +219,7 @@ namespace nNetwork {
 		int  ExitToken{ 0 };
 		int  PauseToken{ 1 };
 		int  CurrentIteration{ 0 };
-		mutable mutex Lock;
+		mutable std::mutex Lock;
 	};
 
 	class nExecuter
@@ -230,8 +227,8 @@ namespace nNetwork {
 	{
 	public:
 		virtual ~nExecuter();
-		nExecuter(const vector<int>& layerCounts, const ISensor& sensor);
-		nExecuter(const vector<int>& layerCounts, const ISensor& sensor, nNodeNetworkConfig config);
+		nExecuter(const std::vector<int>& layerCounts, const ISensor& sensor);
+		nExecuter(const std::vector<int>& layerCounts, const ISensor& sensor, nNodeNetworkConfig config);
 
 		void Start();
 		void Pause();
@@ -239,12 +236,12 @@ namespace nNetwork {
 
 		int   GetCurrentIterations() const;
 
-		unique_ptr<nNodeNetwork> GetSnapShot() const;
+		std::unique_ptr<nNodeNetwork> GetSnapShot() const;
 
 	private:
-		unique_ptr<nNodeNetwork> m_pNetwork;
-		unique_ptr<thread>       m_pThread;
-		nExecuterContext         m_executerContext;
+		std::unique_ptr<nNodeNetwork> m_pNetwork;
+		std::unique_ptr<std::thread>  m_pThread;
+		nExecuterContext              m_executerContext;
 
 		static void ThreadExecuter(nNodeNetwork *pNetwork, nExecuterContext *pContext);
 	};

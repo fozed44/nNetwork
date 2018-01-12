@@ -1,5 +1,7 @@
 #include "nNetwork.h"
 
+using namespace std;
+
 namespace nNetwork {
 
 	nExecuter::nExecuter(const vector<int>& layerCounts, const ISensor& sensor) 

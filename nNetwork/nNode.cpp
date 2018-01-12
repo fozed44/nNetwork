@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "nNetwork.h"
 
+using namespace std;
 using namespace nNetwork;
 
 int nNode::s_currentGlobalId{ 0 };

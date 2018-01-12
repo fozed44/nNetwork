@@ -1,9 +1,8 @@
 #include "stdafx.h"
 #include "nNetwork.h"
 
-#define CLIP(A) if((A)>1.0) { (A) = 1.0; }
-
 using namespace nNetwork;
+using namespace std;
 
 void nSensingNode::Sense(const ISensor& sensor) {
 	m_currentValue += sensor.Sense(m_senseLocation);
@@ -14,3 +13,4 @@ void nSensingNode::Sense(const ISensor& sensor) {
 		m_currentValue = 0;
 	}
 }
+
