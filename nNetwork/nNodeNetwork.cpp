@@ -5,13 +5,44 @@ using namespace nNetwork;
 using namespace std;
 
 nNodeNetworkConfig DefaultConfig {
-	/*MinInitialDecay*/ 0.1,
-	/*MaxInitialDecay*/ 0.05,
 	/*MinInitialSynapseWeight*/ 0.1,
 	/*MaxInitialSynapseWeight*/ 0.2,
+
+	/*MinInitialDecay*/ 0.1,
+	/*MaxInitialDecay*/ 0.05,
+
+	/*MinResetCount*/ 3,
+	/*MaxResetCount*/ 3,
+
 	/*SensesPerTick*/ 4,
 	[](int nodeLocation) { return vector<int>{nodeLocation}; }
 };
+
+vType GenerateInitialWeight(const nNodeNetworkConfig &config) {
+	vType r = (vType)rand() / (vType)INT_MAX;
+	vType min = config.MinInitialSynapseWeight;
+	vType delta = config.MaxInitialSynapseWeight - config.MinInitialSynapseWeight;
+
+	return min + (delta * r);
+}
+
+vType GenerateInitialDecay(const nNodeNetworkConfig &config) {
+	vType r = (vType)rand() / (vType)INT_MAX;
+	vType min = config.MinInitialDecay;
+	vType delta = config.MaxInitialDecay - config.MinInitialDecay;
+
+	return min + (delta * r);
+}
+
+int GenerateInitialRestCount(const nNodeNetworkConfig &config) {
+	if (config.MaxRestCount == config.MinRestCount)
+		return config.MaxRestCount;
+
+	int delta = config.MaxRestCount - config.MinRestCount;
+	delta = rand() % delta;
+
+	return config.MinRestCount + delta;
+}
 
 nNodeNetwork::nNodeNetwork(const vector<int>& layerCounts, const ISensor& sensor)
 	: nNodeNetwork::nNodeNetwork(layerCounts, sensor, DefaultConfig)
@@ -181,12 +212,7 @@ void nNodeNetwork::BuildLayerSynapses(const vector<nNode*>* const bottomLayer, c
 	}
 }
 
-vType nNodeNetwork::GenerateInitialWeight() const {
-	vType r = (vType)rand() / (vType)INT_MAX;
-	vType delta = m_config.MaxInitialSynapseWeight - m_config.MinInitialSynapseWeight;
 
-	return delta * r;
-}
 
 void nNodeNetwork::ForEach(std::function<void(const nNode&)> fn) const {
 	for (auto pLayer : m_layers)

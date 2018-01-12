@@ -128,13 +128,20 @@ namespace nNetwork {
 	//		nNodeNetwork configuration passed to the nNodeNetwork ctor	
 	struct nNodeNetworkConfig
 	{
-		// The average decay on nNode::m_currentValue per tick.
-		vType MinInitialDecay;
-		vType MaxInitialDecay;
-
+		// Min and max synapse weights.
 		vType MinInitialSynapseWeight;
 		vType MaxInitialSynapseWeight;
 
+		// During each Tick(), m_currentValue -= m_decay;
+		vType MinInitialDecay;
+		vType MaxInitialDecay;
+
+		// Every time a node fires, it node must 'rest' for ResetCount ticks
+		// before it can fire again.
+		int MinRestCount;
+		int MaxRestCount;
+
+		// Tick is called once every SensesPerTick times Sense() is called.
 		int   SensesPerTick;
 
 		std::vector<int>(*pSensorLocationMapper)(int);
@@ -202,7 +209,6 @@ namespace nNetwork {
 		void BuildNextLayer(int count);
 		void BuildNetwork(const std::vector<int>& layerCounts, const ISensor& sensor);
 		void BuildSynapses() const;
-		vType GenerateInitialWeight() const;
 		void BuildLayerSynapses(const std::vector<nNode*>* const bottomLayer, const std::vector<nNode*>* const topLayer) const;
 		void CopySensingLayer();
 		void CopyResultNode();
