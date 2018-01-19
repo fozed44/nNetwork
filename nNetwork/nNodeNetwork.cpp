@@ -206,13 +206,11 @@ void nNodeNetwork::BuildLayerSynapses(const vector<nNode*>* const bottomLayer, c
 	for (auto bottomNode : *bottomLayer) {
 		for (auto topNode : *topLayer) {
 			bottomNode->Synapses.push_back(
-				nSynapse { GenerateInitialWeight(), topNode }
+				nSynapse { GenerateInitialWeight(m_config), topNode }
 			);
 		}
 	}
 }
-
-
 
 void nNodeNetwork::ForEach(std::function<void(const nNode&)> fn) const {
 	for (auto pLayer : m_layers)
