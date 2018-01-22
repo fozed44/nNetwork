@@ -146,8 +146,11 @@ void nNodeNetwork::BuildFirstLayer(int count, const ISensor& sensor)
 	auto newLayer = new vector<nNode*>();
 
 	// Create 'count' new nodes, add them to the new layer.
-	for (int x = 0; x < count; ++x)
-		newLayer->emplace_back(new nSensingNode(m_nextNetworkId++, m_config.pSensorLocationMapper(x)));
+	for (int x = 0; x < count; ++x) {
+		auto decay = GenerateInitialDecay(m_config);
+		auto maxRestCount = GenerateInitialRestCount(m_config);
+		newLayer->emplace_back(new nSensingNode(m_nextNetworkId++, decay, maxRestCount, m_config.pSensorLocationMapper(x)));
+	}
 
 	m_layers.push_back(newLayer);
 }
@@ -156,8 +159,11 @@ void nNodeNetwork::BuildNextLayer(int count)
 {
 	std::vector<nNode*>* layer = new std::vector<nNode*>();
 
-	for (int x = 0; x < count; ++x)
-		layer->push_back(new nNode(m_nextNetworkId++));
+	for (int x = 0; x < count; ++x) {
+		auto decay = GenerateInitialDecay(m_config);
+		auto maxRestCount = GenerateInitialRestCount(m_config);
+		layer->push_back(new nNode(m_nextNetworkId++, decay, maxRestCount));
+	}
 
 	m_layers.push_back(layer);
 }

@@ -18,7 +18,7 @@ namespace tnNetwork {
 		{
 			string testString{ "Test String" };
 			unique_ptr<StringSensable> pTestSensable = make_unique<StringSensable>(testString);
-			unique_ptr<StringSensor>   pTestSensor = make_unique<StringSensor>(pTestSensable.get());
+			unique_ptr<StringSensor>   pTestSensor   = make_unique<StringSensor>(pTestSensable.get());
 
 			Assert::IsNotNull(pTestSensor.get());
 		}
@@ -29,8 +29,9 @@ namespace tnNetwork {
 		{
 			string testString{ "Test String" };
 			unique_ptr<StringSensable> pTestSensable = make_unique<StringSensable>(testString);
-			unique_ptr<StringSensor> pTestSensor = make_unique<StringSensor>(pTestSensable.get());
+			unique_ptr<StringSensor>   pTestSensor   = make_unique<StringSensor>(pTestSensable.get());
 
+			Assert::IsNotNull(pTestSensor.get());
 			auto result = pTestSensor->Sense(vector<int>{0});
 
 			Assert::AreNotEqual(0.0, (double)result);

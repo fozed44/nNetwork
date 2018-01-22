@@ -65,6 +65,8 @@ namespace nNetwork {
 		friend class nSensingNode;
 	public:
 		nNode(int networkId);
+		nNode(int networkId, vType decay) : nNode{ networkId } { m_decay = decay; }
+		nNode(int networkId, vType decay, int maxRestCount) : nNode{ networkId, decay } { m_maxRestCount = maxRestCount; }
 		virtual ~nNode();
 
 		std::vector<nSynapse> Synapses;
@@ -87,19 +89,19 @@ namespace nNetwork {
 
 		// The current VALUE of the node... The node will fire if m_currentValue goes above
 		// NODE_TRIGGER_POINT;
-		vType m_currentValue;
+		vType m_currentValue{ 0 };
 
 		// m_currentValue will decay by this amount on each call to Tick.
-		vType m_decay;
+		vType m_decay{ 0.1 };
 
 		// Once a node fires, it must rest this many ticks before it can fire again.
-		int m_maxRestCount;
+		int m_maxRestCount{ 2 };
 
 		// When a node fires, m_restCount is set to m_maxRestCount. If m_restCount is > 0
 		// Tick decrements m_restCount rather and performing an actual tick. m_restCount
 		// must reach 0 before the node starts up again.
 		// ActivateFromSynapse() also does nothing if m_restCount > 0.
-		int m_restCount = 0;
+		int m_restCount{ 0 };
 
 		void Fire();
 		void ActivateFromSynapse(const nSynapse& synapse);
@@ -112,7 +114,12 @@ namespace nNetwork {
 	class nSensingNode : public nNode
 	{
 	public:
-		nSensingNode(int networkId, const std::vector<int>& senseLocation) : nNode(networkId), m_senseLocation{ senseLocation } {};
+		nSensingNode(int networkId, const std::vector<int>& senseLocation) 
+			: nNode(networkId), m_senseLocation{ senseLocation } {};
+		nSensingNode(int networkId, vType decay, const std::vector<int>& senseLocation) 
+			: nNode{ networkId, decay }, m_senseLocation{ senseLocation } {};
+		nSensingNode(int networkId, vType decay, int maxRestCount, const std::vector<int>& senseLocation)
+			: nNode{ networkId, decay, maxRestCount }, m_senseLocation{ senseLocation } {};
 		virtual ~nSensingNode() {};
 
 		virtual void Sense(const ISensor& sensor);
@@ -126,6 +133,8 @@ namespace nNetwork {
 	//		
 	//++ nNodeNetwork
 	//		nNodeNetwork configuration passed to the nNodeNetwork ctor	
+	//		For the most part, the values in this configuration object are used when
+	//		constructing new nodes.
 	struct nNodeNetworkConfig
 	{
 		// Min and max synapse weights.
@@ -253,3 +262,21 @@ namespace nNetwork {
 	};
 
 }
+
+// +++ nNetwork Information
+//
+//++ What is the nNodeNetwork Class?
+//		The nNodeNetwork 
+//++ Concepts:
+//+	The Network Tick:
+//		In a nutshell, the network does its thing by repeatedly calling nNodeNetwork::Tick. nNodeNetwork::Tick does two
+//		things:
+//			a) During EVERY call to nNodeNetwork::Tick, nNodeNetwork::SenseTick is called.
+//				nNodeNetwork::SenseTick calls nNode::Sense on every node in the sensing layer.
+//			b) Once every m_config.SensesPerTick, nNodeNetwork::NodeTick is called.
+//				nNodeNetwork::NodeTick calls nNode::Tick on every node in the network.
+//+ Node Sensing:
+//+ Node Ticking:
+//
+//++ nNode
+//++ nNode
