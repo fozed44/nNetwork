@@ -2,7 +2,7 @@
 #include "CppUnitTest.h"
 #include <memory>
 
-#include "../nNetworkStringImplementation/nNetworkStringImplementation.h"
+#include "../nNetworkImplementation/nNetworkStringImplementation.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace std;

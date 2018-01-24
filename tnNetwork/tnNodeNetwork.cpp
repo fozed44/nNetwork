@@ -1,6 +1,6 @@
 #include "CppUnitTest.h"
 #include "../nNetwork/nNetwork.h"
-#include "../nNetworkStringImplementation/nNetworkStringImplementation.h"
+#include "../nNetworkImplementation/nNetworkStringImplementation.h"
 #include <vector>
 #include <memory>
 

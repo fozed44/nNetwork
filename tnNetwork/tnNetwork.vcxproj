@@ -168,7 +168,7 @@
     <ClCompile Include="tStringSensor.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\nNetworkStringImplementation\nNetworkStringImplementation.vcxproj">
+    <ProjectReference Include="..\nNetworkImplementation\nNetworkImplementation.vcxproj">
       <Project>{37256651-0ff3-4368-8c41-e7ebc01d9df0}</Project>
     </ProjectReference>
   </ItemGroup>
