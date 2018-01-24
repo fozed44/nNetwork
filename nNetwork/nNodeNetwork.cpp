@@ -14,7 +14,6 @@ nNodeNetworkConfig DefaultConfig {
 	/*MinResetCount*/ 3,
 	/*MaxResetCount*/ 3,
 
-	/*SensesPerTick*/ 4,
 	[](int nodeLocation) { return vector<int>{nodeLocation}; }
 };
 
@@ -254,8 +253,7 @@ void nNodeNetwork::Tick()
 // Call nNode.Tick() on each node that is stored in the m_layers vector.
 {
 	SenseTick();
-	if (!(m_tickCount++ % m_config.SensesPerTick))
-		NodeTick();
+	NodeTick();
 }
 
 void nNodeNetwork::SenseTick()
@@ -281,6 +279,10 @@ nNode* nNodeNetwork::GetResultNode() {
 
 vector<nSensingNode*>* nNodeNetwork::GetSensingNodes() {
 	return &m_sensingLayer;
+}
+
+vector<nNode*>* nNodeNetwork::GetLayer(int layerIndex) {
+	return m_layers[layerIndex];
 }
 
 #endif

@@ -29,31 +29,32 @@ void nNode::Fire()
 }
 
 void nNode::ActivateFromSynapse(const nSynapse& synapse)
+	// Called by another node when the other node is firing....
 {
 
 	if (!m_restCount)
 	{
 		m_currentValue += synapse.weight;
 
-		// Keep m_currentCalue clipped to 1.0
+		// Keep m_currentValue clipped to 1.0
 		if (m_currentValue > 1.0)
 			m_currentValue = 1.0;
+
 		if (m_currentValue > NODE_TRIGGER_POINT)
 			Fire();
 	}
 }
 
-void nNode::Tick() {
-	if (!m_restCount)
-	{
-		m_currentValue -= m_decay;
+void nNode::Tick()
+	// The node decays on each tick.
+	// If the node is resting (m_restCount > 0) decrement m_restCount.
+{
 
-		// keep m_currentValue clipped to 0.
-		if (m_currentValue < 0)
-			m_currentValue = 0;
-	}
-	else
-	{
+	m_currentValue -= m_decay;
+	if (m_currentValue < 0)
+		m_currentValue = 0;
+
+	if (m_restCount)
 		--m_restCount;
-	}
 }
+ 

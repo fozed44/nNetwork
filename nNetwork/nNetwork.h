@@ -150,9 +150,6 @@ namespace nNetwork {
 		int MinRestCount;
 		int MaxRestCount;
 
-		// Tick is called once every SensesPerTick times Sense() is called.
-		int   SensesPerTick;
-
 		std::vector<int>(*pSensorLocationMapper)(int);
 	};
 
@@ -171,7 +168,7 @@ namespace nNetwork {
 		
 		std::unique_ptr<nNodeNetwork> GetSnapShot() const;
 
-		std::vector<int>    GetLayerCounts() const;
+		std::vector<int> GetLayerCounts() const;
 
 		const ISensor& GetSensor() const;
 
@@ -184,6 +181,8 @@ namespace nNetwork {
 
 		nNode* GetResultNode();
 		std::vector<nSensingNode*>* GetSensingNodes();
+		std::vector<nNode*>* GetLayer(int layerIndex);
+		vType GetCurrentValue() const { return m_pResultNode->GetCurrentValue(); }
 
 #endif
 
@@ -271,10 +270,8 @@ namespace nNetwork {
 //+	The Network Tick:
 //		In a nutshell, the network does its thing by repeatedly calling nNodeNetwork::Tick. nNodeNetwork::Tick does two
 //		things:
-//			a) During EVERY call to nNodeNetwork::Tick, nNodeNetwork::SenseTick is called.
-//				nNodeNetwork::SenseTick calls nNode::Sense on every node in the sensing layer.
-//			b) Once every m_config.SensesPerTick, nNodeNetwork::NodeTick is called.
-//				nNodeNetwork::NodeTick calls nNode::Tick on every node in the network.
+//			a) nNodeNetwork::Tick calls nSensingNode::Sense on every sensing node in the network.
+//			b) nNodeNetwork::Tick calls nNode::Tick on every node in the network.
 //+ Node Sensing:
 //+ Node Ticking:
 //
