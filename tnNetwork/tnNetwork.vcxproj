@@ -163,6 +163,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="tExecuter.cpp" />
+    <ClCompile Include="tnIntegeralSensing.cpp" />
     <ClCompile Include="tnNodeNetwork.cpp" />
     <ClCompile Include="tStringSensable.cpp" />
     <ClCompile Include="tStringSensor.cpp" />

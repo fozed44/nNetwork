@@ -10,7 +10,7 @@ public:
 	virtual int GetDimensionCount() const override;
 	virtual int GetDimensionLength(int dimension) const override;
 
-	virtual unsigned char Sense(const std::vector<int>& location) const override;
+	virtual unsigned char Sense(const std::vector<int>& location) const override;	
 
 protected:
 	std::string _target;
@@ -23,6 +23,8 @@ public:
 	virtual ~StringSensor();
 
 	virtual vType Sense(const std::vector<int>& location) const override;
+
+	vType Sense(int location) const { return Sense(std::vector<int>{location}); }
 
 protected:
 	StringSensable *_pSensable;

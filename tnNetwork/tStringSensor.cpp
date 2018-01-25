@@ -35,6 +35,11 @@ namespace tnNetwork {
 			auto result = pTestSensor->Sense(vector<int>{0});
 
 			Assert::AreNotEqual(0.0, (double)result);
+
+			// Use the alternate 'sense' overload that does not use a vector...
+			result = pTestSensor->Sense(0);
+
+			Assert::AreNotEqual(0.0, (double)result);
 		}
 
 	};
